@@ -35,13 +35,18 @@ const (
 	CategoryAPICredential        = "API Credential"
 	CategoryBankAccount          = "Bank Account"
 	CategoryCreditCard           = "Credit Card"
+	CategoryDatabase             = "Database"
 	CategoryDocument             = "Document"
 	CategoryDriverLicense        = "Driver License"
+	CategoryEmailAccount         = "Email Account"
 	CategoryIdentity             = "Identity"
 	CategoryLogin                = "Login"
+	CategoryMedicalRecord        = "Medical Record"
 	CategoryMembership           = "Membership"
+	CategoryOutdoorLicense       = "Outdoor License"
 	CategoryPassport             = "Passport"
 	CategoryPassword             = "Password"
+	CategoryRewardProgram        = "Reward Program"
 	CategorySecureNote           = "Secure Note"
 	CategoryServer               = "Server"
 	CategorySocialSecurityNumber = "Social Security Number"
@@ -58,20 +63,30 @@ func (c *Category) UnmarshalText(text []byte) error {
 		*c = CategoryBankAccount
 	case "CREDIT_CARD":
 		*c = CategoryCreditCard
+	case "DATABASE":
+		*c = CategoryDatabase
 	case "DOCUMENT":
 		*c = CategoryDocument
 	case "DRIVER_LICENSE":
 		*c = CategoryDriverLicense
+	case "EMAIL_ACCOUNT":
+		*c = CategoryEmailAccount
 	case "IDENTITY":
 		*c = CategoryIdentity
 	case "LOGIN":
 		*c = CategoryLogin
+	case "MEDICAL_RECORD":
+		*c = CategoryMedicalRecord
 	case "MEMBERSHIP":
 		*c = CategoryMembership
+	case "OUTDOOR_LICENSE":
+		*c = CategoryOutdoorLicense
 	case "PASSPORT":
 		*c = CategoryPassport
 	case "PASSWORD":
 		*c = CategoryPassword
+	case "REWARD_PROGRAM":
+		*c = CategoryRewardProgram
 	case "SECURE_NOTE":
 		*c = CategorySecureNote
 	case "SERVER":
