@@ -9,7 +9,8 @@ import (
 )
 
 var (
-	vault = flag.String("vault", "", "only use this vault")
+	account = flag.String("account", "", "the account to use")
+	vault   = flag.String("vault", "", "the vault to use")
 )
 
 func main() {
@@ -18,7 +19,7 @@ func main() {
 	var attr Attributes
 	attr.Parse(os.Stdin)
 
-	switch op := flag.Arg(0); op {
+	switch mode := flag.Arg(0); mode {
 	case "get":
 		res, err := get(attr)
 		if err != nil {
@@ -39,13 +40,16 @@ func main() {
 }
 
 func get(attr Attributes) (Attributes, error) {
-	list, err := op.ListItem(*vault)
+	list, err := op.ListItem(
+		op.WithAccount(*account),
+		op.WithVault(*vault),
+		op.WithCategories(op.CategoryAPICredential))
 	if err != nil {
 		return attr, err
 	}
 
 	for _, entry := range list {
-		item, err := op.GetItem(entry.ID, *vault)
+		item, err := op.GetItem(entry.ID, op.WithAccount(*account), op.WithVault(*vault))
 		if err != nil {
 			return attr, err
 		}

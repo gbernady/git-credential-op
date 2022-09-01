@@ -1,28 +1,9 @@
 package op
 
 import (
+	"fmt"
 	"time"
 )
-
-func GetItem(name string, vault string) (Item, error) {
-	args := []string{"item", "get", name, "--format", "json", "--iso-timestamps"}
-	if vault != "" {
-		args = append(args, "--vault", vault)
-	}
-	var item Item
-	err := run(args, &item)
-	return item, err
-}
-
-func ListItem(vault string) ([]Item, error) {
-	args := []string{"item", "list", "--format", "json", "--iso-timestamps", "--categories", "API Credential"}
-	if vault != "" {
-		args = append(args, "--vault", vault)
-	}
-	items := []Item{}
-	err := run(args, &items)
-	return items, err
-}
 
 type Item struct {
 	ID        string    `json:"id"`
@@ -41,7 +22,7 @@ type Item struct {
 func (i Item) Field(key string) Field {
 	var res Field
 	for _, field := range i.Fields {
-		if field.ID == key || field.Label == key {
+		if key == field.ID || key == field.Label {
 			res = field
 		}
 	}
@@ -51,23 +32,63 @@ func (i Item) Field(key string) Field {
 type Category string
 
 const (
-	CategoryAPICredential        = "API_CREDENTIAL"
-	CategoryBankAccount          = "BANK_ACCOUNT"
-	CategoryCreditCard           = "CREDIT_CARD"
-	CategoryDocument             = "DOCUMENT"
-	CategoryDriverLicense        = "DRIVER_LICENSE"
-	CategoryIdentity             = "IDENTITY"
-	CategoryLogin                = "LOGIN"
-	CategoryMembership           = "MEMBERSHIP"
-	CategoryPassport             = "PASSPORT"
-	CategoryPassword             = "PASSWORD"
-	CategorySecureNote           = "SECURE_NOTE"
-	CategoryServer               = "SERVER"
-	CategorySocialSecurityNumber = "SOCIAL_SECURITY_NUMBER"
-	CategorySoftwareLicense      = "SOFTWARE_LICENSE"
-	CategorySSHKey               = "SSH_KEY"
-	CategoryWirelessRouter       = "WIRELESS_ROUTER"
+	CategoryAPICredential        = "API Credential"
+	CategoryBankAccount          = "Bank Account"
+	CategoryCreditCard           = "Credit Card"
+	CategoryDocument             = "Document"
+	CategoryDriverLicense        = "Driver License"
+	CategoryIdentity             = "Identity"
+	CategoryLogin                = "Login"
+	CategoryMembership           = "Membership"
+	CategoryPassport             = "Passport"
+	CategoryPassword             = "Password"
+	CategorySecureNote           = "Secure Note"
+	CategoryServer               = "Server"
+	CategorySocialSecurityNumber = "Social Security Number"
+	CategorySoftwareLicense      = "Software License"
+	CategorySSHKey               = "SSH Key"
+	CategoryWirelessRouter       = "Wireless Router"
 )
+
+func (c *Category) UnmarshalText(text []byte) error {
+	switch string(text) {
+	case "API_CREDENTIAL":
+		*c = CategoryAPICredential
+	case "BANK_ACCOUNT":
+		*c = CategoryBankAccount
+	case "CREDIT_CARD":
+		*c = CategoryCreditCard
+	case "DOCUMENT":
+		*c = CategoryDocument
+	case "DRIVER_LICENSE":
+		*c = CategoryDriverLicense
+	case "IDENTITY":
+		*c = CategoryIdentity
+	case "LOGIN":
+		*c = CategoryLogin
+	case "MEMBERSHIP":
+		*c = CategoryMembership
+	case "PASSPORT":
+		*c = CategoryPassport
+	case "PASSWORD":
+		*c = CategoryPassword
+	case "SECURE_NOTE":
+		*c = CategorySecureNote
+	case "SERVER":
+		*c = CategoryServer
+	case "SOCIAL_SECURITY_NUMBER":
+		*c = CategorySocialSecurityNumber
+	case "SOFTWARE_LICENSE":
+		*c = CategorySoftwareLicense
+	case "SSH_KEY":
+		*c = CategorySSHKey
+	case "WIRELESS_ROUTER":
+		*c = CategoryWirelessRouter
+	default:
+		return fmt.Errorf("unrecognized category %q", string(text))
+	}
+	return nil
+}
 
 type Field struct {
 	ID        string       `json:"id"`
@@ -108,7 +129,16 @@ type URL struct {
 	HRef    string `json:"href"`
 }
 
-type Vault struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+func GetItem(name string, flags ...Flag) (Item, error) {
+	cmd := []string{"item", "get", name}
+	var item Item
+	err := run(cmd, flags, &item)
+	return item, err
+}
+
+func ListItem(flags ...Flag) ([]Item, error) {
+	cmd := []string{"item", "list"}
+	items := []Item{}
+	err := run(cmd, flags, &items)
+	return items, err
 }
