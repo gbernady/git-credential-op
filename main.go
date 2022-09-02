@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	account = flag.String("account", "", "the account to use")
-	vault   = flag.String("vault", "", "the vault to use")
+	account = flag.String("account", "", "the account to use (if more than one is available)")
+	vault   = flag.String("vault", "Personal", "the vault to use; defaults to the Personal vault")
 )
 
 func main() {
