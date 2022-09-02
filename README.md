@@ -8,9 +8,9 @@ You can use it to access remote repositories over HTTPS with credentials like th
 
 ### Features
 
-- [x] Read credentials from 1Password
-- [ ] Store credentials in 1Password
-- [ ] Erase credentials from 1Password
+- [x] Read credentials
+- [ ] Store credentials
+- [ ] Erase credentials
 
 ### Platforms
 
@@ -22,21 +22,23 @@ You can use it to access remote repositories over HTTPS with credentials like th
 
 ## Installation
 
-### Homebrew
+### macOS
 
-The easiest way for `macOS` users is to use the [Homebrew](https://brew.sh) package manager and my tap:
+#### Homebrew
+
+You can install the helper using [Homebrew](https://brew.sh) from [my tap](https://github.com/gbernady/homebrew-tap):
 
 ```sh
 brew install gbernady/tap/git-credential-op
 ```
 
-### Go
+### Linux
 
-If have the [Go](https://go.dev) compiler installed on you machine, you can install the helper with `go install`:
+TODO
 
-```sh
-go install github.com/gbernady/git-credential-op@latest
-```
+### Windows
+
+TODO
 
 ## Usage
 
@@ -56,9 +58,18 @@ git config --global credential.helper op
 
 Note: The credentials need to be saved as API Credential items in 1Password, or otherwise the helper won't find them.
 
-### Configuration Options
+### Configuration Flags
 
-TODO
+The credential helper accepts a few configuration flags that can be set like this:
+
+```sh
+git config --global credential.helper "op [flag]"
+```
+
+#### Flags
+
+- `--account <name>` - the account to use
+- `--vault <name>` - the vault to use
 
 ### Disabling System Helper
 
