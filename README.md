@@ -2,7 +2,7 @@
 
 The `git-credential-op` is a custom Git credential helper built on top of [1Password CLI](https://developer.1password.com/docs/cli/get-started/).
 
-You can use it to access remote repositories over HTTPS with credentials like the GitHub Personal Access Tokens (PATs) stored in [1Password](https://1password.com) instead of [built-in credential helpers](https://git-scm.com/book/en/v2/Git-Tools-Credential-Storage).
+You can use it to access remote repositories over HTTPS with credentials like GitHub's Personal Access Tokens (PATs) stored in [1Password](https://1password.com) instead of [built-in credential helpers](https://git-scm.com/book/en/v2/Git-Tools-Credential-Storage).
 
 ## Status
 
@@ -42,7 +42,7 @@ TODO
 
 ## Usage
 
-Make sure you have the latest version of [1Password CLI](https://developer.1password.com/docs/cli/get-started/) installed on your system and you signed in to your 1Password account. If everything is set up correctly, you should be able to list your vaults by running `op vault ls` in your terminal:
+Make sure you have the latest version of [1Password CLI](https://developer.1password.com/docs/cli/get-started/) installed on your system and you are signed in to your 1Password account. If everything is set up correctly, you should be able to list your vaults by running `op vault ls` in your terminal:
 
 ```sh
 $ op vault ls
@@ -50,7 +50,7 @@ ID                            NAME
 ynghx4vcntp3zvhqyehlcp7v7f    Personal
 ```
 
-Once you have the [1Password CLI](https://developer.1password.com/docs/cli/get-started/) up and running, you can enable the credential helper in your git configuration with:
+Once you have [1Password CLI](https://developer.1password.com/docs/cli/get-started/) up and running, you can enable the credential helper in your git configuration with:
 
 ```sh
 git config --global credential.helper op
