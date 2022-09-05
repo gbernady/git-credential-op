@@ -6,10 +6,10 @@ import (
 	"io"
 	"strings"
 
-	"github.com/gbernady/git-credential-op/pkg/op"
+	"github.com/gbernady/go-op"
 )
 
-type Attributes struct {
+type attributes struct {
 	Protocol string
 	Host     string
 	Path     string
@@ -18,7 +18,7 @@ type Attributes struct {
 	URL      string
 }
 
-func (a *Attributes) Parse(r io.Reader) {
+func (a *attributes) Parse(r io.Reader) {
 	s := bufio.NewScanner(r)
 	for s.Scan() {
 		v := strings.Split(s.Text(), "=")
@@ -46,7 +46,7 @@ func (a *Attributes) Parse(r io.Reader) {
 	}
 }
 
-func (a Attributes) String() string {
+func (a attributes) String() string {
 	var b strings.Builder
 	if a.Protocol != "" {
 		fmt.Fprintf(&b, "protocol=%s\n", a.Protocol)
@@ -69,14 +69,13 @@ func (a Attributes) String() string {
 	return b.String()
 }
 
-func (a Attributes) Match(item op.Item) bool {
-	if v := item.Field("hostname").Value; v != "" && a.Host != "" && v != a.Host {
+func (a attributes) Match(item *op.Item) bool {
+	// required
+	if f := item.Field("hostname"); f == nil || f.Value == "" || f.Value != a.Host {
 		return false
 	}
-	if v := item.Field("path").Value; v != "" && a.Path != "" && v != a.Path {
-		return false
-	}
-	if v := item.Field("username").Value; v != "" && a.Username != "" && v != a.Username {
+	// optional
+	if f := item.Field("path"); f != nil && f.Value != "" && f.Value != a.Path {
 		return false
 	}
 	return true

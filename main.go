@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/gbernady/git-credential-op/pkg/op"
+	"github.com/gbernady/go-op"
 )
 
 var (
@@ -16,8 +16,12 @@ var (
 func main() {
 	flag.Parse()
 
-	var attr Attributes
+	var attr attributes
 	attr.Parse(os.Stdin)
+
+	if attr.Protocol != "https" {
+		return
+	}
 
 	switch mode := flag.Arg(0); mode {
 	case "get":
@@ -39,26 +43,24 @@ func main() {
 	}
 }
 
-func get(attr Attributes) (Attributes, error) {
-	list, err := op.ListItem(
-		op.WithAccount(*account),
-		op.WithVault(*vault),
-		op.WithCategories(op.CategoryAPICredential))
+func get(attr attributes) (attributes, error) {
+	cli := &op.CLI{Account: *account}
+	list, err := cli.ListItems(op.WithVault(*vault), op.WithCategories(op.CategoryAPICredential))
 	if err != nil {
 		return attr, err
 	}
 
 	for _, entry := range list {
-		item, err := op.GetItem(entry.ID, op.WithAccount(*account), op.WithVault(*vault))
+		item, err := cli.GetItem(entry.ID, op.WithVault(*vault))
 		if err != nil {
 			return attr, err
 		}
 		if attr.Match(item) {
-			if attr.Username == "" {
-				attr.Username = item.Field("username").Value
+			if f := item.Field("username"); f != nil {
+				attr.Username = f.Value
 			}
-			if attr.Password == "" {
-				attr.Password = item.Field("credential").Value
+			if f := item.Field("credential"); f != nil {
+				attr.Password = f.Value
 			}
 			break
 		}
@@ -66,12 +68,12 @@ func get(attr Attributes) (Attributes, error) {
 	return attr, nil
 }
 
-func store(attr Attributes) error {
+func store(attr attributes) error {
 	// FIXME: use op to store api credentials in 1p
 	return nil
 }
 
-func erase(attr Attributes) error {
+func erase(attr attributes) error {
 	// FIXME: use op to erase api credentials in 1p
 	return nil
 }
