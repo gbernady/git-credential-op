@@ -13,6 +13,12 @@ var (
 	vault   = flag.String("vault", "Personal", "the vault to use; defaults to the Personal vault")
 )
 
+func init() {
+	// Ensure default install location for 1Password CLI is on $PATH.
+	// Reference: https://developer.1password.com/docs/cli/get-started/
+	os.Setenv("PATH", fmt.Sprintf("/usr/local/bin:%s", os.Getenv("PATH")))
+}
+
 func main() {
 	flag.Parse()
 
