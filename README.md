@@ -6,7 +6,7 @@ You can use it to access remote repositories over HTTPS with credentials like Gi
 
 ## Status
 
-**Note:** This project is **highly experimental**. Use at your own risk!
+⚠️ This project is **highly experimental**. Use at your own risk!
 
 ### Features
 
