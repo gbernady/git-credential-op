@@ -6,6 +6,8 @@ You can use it to access remote repositories over HTTPS with credentials like Gi
 
 ## Status
 
+**Note:** This project is **highly experimental**. Use at your own risk!
+
 ### Features
 
 - [x] Read credentials
@@ -30,6 +32,14 @@ You can install the helper using [Homebrew](https://brew.sh) from [my tap](https
 
 ```sh
 brew install gbernady/tap/git-credential-op
+```
+
+#### Go Package
+
+If you have Go compiler on your system, you can compile and install the helper as a Go package:
+
+```sh
+go install github.com/gbernady/git-credential-op@latest
 ```
 
 ### Linux
