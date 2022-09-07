@@ -81,11 +81,19 @@ git config --global credential.helper "op [flag]"
 - `--account <name>` - the account to use (if more than one is available)
 - `--vault <name>` - the vault to use; defaults to the Personal vault
 
+## Troubleshooting
+
+### Private Homebrew taps
+
+Homebrew [filters envs including $PATH](https://github.com/Homebrew/brew/blob/master/bin/brew#L127), so it won't be able to find the `git-credential-op` helper. This can be worked around with an [absolute path to the binary](https://git-scm.com/docs/gitcredentials#_custom_helpers).
+
+On top op that, the user environment set up by Homebrew for installing formulae does not contain any local machine configs like the `$HOME/.gitconfig`.
+
 ### Disabling System Helper
 
-On some machines (e.g., macOS with Git installed from Homebrew or Command Line Tools), a credential helper may already be configured in the system-wide `$(prefix)/etc/gitconfig` file. Since the system-wide configuration is read first by Git, that helper will be consulted before this one to store the credential and return in on subsequent use.
+On some machines (e.g., macOS), a credential helper may already be configured in the system-wide `$(prefix)/etc/gitconfig` file. Since the system-wide configuration is read first by Git, that helper will be consulted before this one to store the credential and return in on subsequent use.
 
-That's probably not what you want. If so, you can either modify the system-wide config file or disable reading it altogether by setting the [GIT_CONFIG_NOSYSTEM](https://git-scm.com/docs/git-config#Documentation/git-config.txt-GITCONFIGNOSYSTEM) environment variable in your shell:
+If that's not what you want, you can either modify the system-wide config file or disable reading it altogether with the [GIT_CONFIG_NOSYSTEM](https://git-scm.com/docs/git-config#Documentation/git-config.txt-GITCONFIGNOSYSTEM) environment variable:
 
 ```sh
 export GIT_CONFIG_NOSYSTEM=1
