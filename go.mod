@@ -3,7 +3,7 @@ module github.com/gbernady/git-credential-op
 go 1.19
 
 require (
-	github.com/gbernady/go-op v0.0.0-20220906204444-c54b63099b92
+	github.com/gbernady/go-op v0.0.0-20220907194610-bf3be2e793ac
 	github.com/stretchr/testify v1.8.0
 )
 

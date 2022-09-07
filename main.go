@@ -4,13 +4,21 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"runtime"
 
 	"github.com/gbernady/go-op"
 )
 
+// Injected at build time
 var (
-	account = flag.String("account", "", "the account to use (if more than one is available)")
-	vault   = flag.String("vault", "Personal", "the vault to use; defaults to the Personal vault")
+	buildCommit  = ""
+	buildVersion = ""
+)
+
+var (
+	accountFlag = flag.String("account", "", "the account to use (if more than one is available)")
+	vaultFlag   = flag.String("vault", "Personal", "the vault to use; defaults to the Personal vault")
+	versionFlag = flag.Bool("version", false, "prints helper and 1Password CLI versions")
 )
 
 func init() {
@@ -22,6 +30,11 @@ func init() {
 func main() {
 	flag.Parse()
 
+	if *versionFlag {
+		printVersion()
+		return
+	}
+
 	var attr attributes
 	attr.Parse(os.Stdin)
 
@@ -29,7 +42,7 @@ func main() {
 		return
 	}
 
-	switch mode := flag.Arg(0); mode {
+	switch operation := flag.Arg(0); operation {
 	case "get":
 		res, err := get(attr)
 		if err != nil {
@@ -49,15 +62,25 @@ func main() {
 	}
 }
 
+func printVersion() {
+	fmt.Printf("git-credential-op %s %s %s/%s %s\n", buildVersion, runtime.Version(), runtime.GOOS, runtime.GOARCH, buildCommit)
+	v, err := op.CLI{}.Version()
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+	} else {
+		fmt.Println("1Password CLI", v)
+	}
+}
+
 func get(attr attributes) (attributes, error) {
-	cli := &op.CLI{Account: *account}
-	list, err := cli.ListItems(op.WithVault(*vault), op.WithCategories(op.CategoryAPICredential))
+	cli := &op.CLI{Account: *accountFlag}
+	list, err := cli.ListItems(op.WithVault(*vaultFlag), op.WithCategories(op.CategoryAPICredential))
 	if err != nil {
 		return attr, err
 	}
 
 	for _, entry := range list {
-		item, err := cli.GetItem(entry.ID, op.WithVault(*vault))
+		item, err := cli.GetItem(entry.ID, op.WithVault(*vaultFlag))
 		if err != nil {
 			return attr, err
 		}
