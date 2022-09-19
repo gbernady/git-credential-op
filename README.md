@@ -1,5 +1,9 @@
 # git-credential-op
 
+[![Build Status](https://github.com/gbernady/git-credential-op/workflows/Build/badge.svg?branch=main)](https://github.com/gbernady/git-credential-op/actions?query=branch%3Amain)
+[![Go Report Card](https://goreportcard.com/badge/github.com/gbernady/git-credential-op)](https://goreportcard.com/report/github.com/gbernady/git-credential-op)
+[![GoDoc](https://pkg.go.dev/badge/github.com/gbernady/git-credential-op)](https://pkg.go.dev/github.com/gbernady/git-credential-op)
+
 The `git-credential-op` is a custom Git credential helper built on top of [1Password CLI](https://developer.1password.com/docs/cli/get-started/).
 
 You can use it to access remote repositories over HTTPS with credentials like GitHub's Personal Access Tokens (PATs) stored in [1Password](https://1password.com) instead of [built-in credential helpers](https://git-scm.com/book/en/v2/Git-Tools-Credential-Storage).
