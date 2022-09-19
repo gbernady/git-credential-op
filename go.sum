@@ -7,6 +7,8 @@ github.com/gbernady/go-op v0.0.0-20220906204444-c54b63099b92 h1:ZVFJm9Gk+YJFOde1
 github.com/gbernady/go-op v0.0.0-20220906204444-c54b63099b92/go.mod h1:4v+xDTJuVCldjjW1UXF+iRDLmC34FNjtR/aZzlwAuzE=
 github.com/gbernady/go-op v0.0.0-20220907194610-bf3be2e793ac h1:cslKAEuqASYpZRWUGyUsYxmptz+/B5YWy9eY6ypYTmY=
 github.com/gbernady/go-op v0.0.0-20220907194610-bf3be2e793ac/go.mod h1:4v+xDTJuVCldjjW1UXF+iRDLmC34FNjtR/aZzlwAuzE=
+github.com/gbernady/go-op v0.0.0-20220913194726-cfe63cf5fb93 h1:ldMxvxQtCuirxRBDVs7mvqyKQUN54HnglJvROk2NrHc=
+github.com/gbernady/go-op v0.0.0-20220913194726-cfe63cf5fb93/go.mod h1:YY32ujav7xNg/QsMdRtU4sjKsobfbFSN4u5NgRT71bk=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
