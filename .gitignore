@@ -34,3 +34,7 @@ go.work
 
 # Built Visual Studio Code Extensions
 *.vsix
+
+### https://goreleaser.com
+
+dist/
