@@ -11,18 +11,20 @@ jobs:
   test:
     name: Test
     runs-on: ${{ matrix.os }}
+    permissions:
+      contents: read
     strategy:
       matrix:
         os: [ 'macos-latest', 'ubuntu-latest' ]
         go: [ '1.19' ]
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: ${{ matrix.go }}
-        check-latest: true
-        cache: true
-    - name: Run tests
-      run: go test -v -covermode=count -coverprofile=cover.out ./...
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: ${{ matrix.go }}
+          check-latest: true
+          cache: true
+      - name: Run tests
+        run: go test -v -covermode=count -coverprofile=cover.out ./...
