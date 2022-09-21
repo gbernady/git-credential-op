@@ -22,9 +22,10 @@ checksum:
 snapshot:
   name_template: "{{ incpatch .Version }}-snapshot"
 
-# changelog:
-#   sort: asc
-#   filters:
-#     exclude:
-#       - '^test:'
-#       - '^docs:'
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - '^Merge'
+      - '^test:'
+      - '^docs:'
