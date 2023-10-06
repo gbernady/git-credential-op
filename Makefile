@@ -1,0 +1,42 @@
+##@ General
+
+.PHONY: help
+help: ## Show this help
+	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make <target>\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  %-15s %s\n", $$1, $$2 } /^##@/ { printf "\n%s\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+
+##@ Development
+
+.PHONY: vet
+vet: ## Run go vet against code
+	go vet ./...
+
+.PHONY: lint
+lint: staticcheck ## Run staticcheck against the code
+	$(STATICCHECK) ./...
+
+.PHONY: test
+test: vet lint ## Run tests
+	go test -v -covermode=count -coverprofile=cover.out ./...
+
+.PHONY: build
+build: vet lint ## Build git-credential-op
+	go build -o $(LOCALBIN)/git-credential-op cmd/git-credential-op/main.go
+
+##@ Build Dependencies
+
+## Location to install dependencies to
+LOCALBIN ?= $(shell pwd)/bin
+$(LOCALBIN):
+	mkdir -p $(LOCALBIN)
+
+## Tool binaries
+STATICCHECK ?= $(LOCALBIN)/staticcheck
+
+## Tool versions
+STATICCHECK_VERSION ?= 2023.1.6
+
+.PHONY: staticcheck
+staticcheck: $(STATICCHECK) ## Download staticcheck locally if needed
+$(STATICCHECK): $(LOCALBIN)
+	test -s $(LOCALBIN)/staticcheck && $(LOCALBIN)/staticcheck --version | grep -q $(STATICCHECK_VERSION) || \
+	GOBIN=$(LOCALBIN) go install honnef.co/go/tools/cmd/staticcheck@$(STATICCHECK_VERSION)

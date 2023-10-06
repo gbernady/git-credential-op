@@ -1,0 +1,67 @@
+item get Foo --format json --iso-timestamps
+0
+{
+  "id": "ijfuujah5bfehb4rnx6rkxzpv5",
+  "title": "Foo",
+  "favorite": true,
+  "tags": ["bar baz"],
+  "version": 1,
+  "vault": {
+    "id": "ynghx4vwntpezvhqyeglcp7v7f",
+    "name": "Personal"
+  },
+  "category": "LOGIN",
+  "last_edited_by": "F7GSLUVENFGZVF2HVACL3IAS7F",
+  "created_at": "2022-04-20T09:41:00Z",
+  "updated_at": "2022-04-20T09:41:00Z",
+  "additional_information": "foo@example.com",
+  "urls": [
+    {
+      "label": "website",
+      "primary": true,
+      "href": "https://example.com"
+    }
+  ],
+  "sections": [
+    {
+      "id": "add more"
+    }
+  ],
+  "fields": [
+    {
+      "id": "username",
+      "type": "STRING",
+      "label": "uname",
+      "value": "foo",
+      "reference": "op://Personal/Foo/username"
+    },
+    {
+      "id":        "password",
+      "type":      "CONCEALED",
+      "label":     "passwd",
+      "value":     "bar",
+      "reference": "op://Personal/Foo/password"
+    },
+    {
+      "id": "06CDE696F7B54212BE47E7F99CF674F0",
+      "section": {
+        "id": "add more"
+      },
+      "type":      "STRING",
+      "label":     "username",
+      "value":     "wat",
+      "reference": "op://Personal/Foo/add more/username"
+    }
+  ],
+  "files": [
+    {
+      "id": "toairadal5cpbfbqs72qzrokxb",
+      "name": "Test file",
+      "size": 13,
+      "content_path": "/v1/vaults/ynghx4vwntpezvhqyeglcp7v7f/items/ijfuujah5bfehb4rnx6rkxzpv5/files/toairadal5cpbfbqs72qzrokxb/content",
+      "section": {
+        "id": "add more"
+      }
+    }
+  ]
+}

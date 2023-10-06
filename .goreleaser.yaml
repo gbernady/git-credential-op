@@ -4,8 +4,6 @@ builds:
       - -trimpath
     ldflags:
       - -s -w
-      - -X main.buildCommit={{ .Commit }}
-      - -X main.buildVersion={{ .Version }}
     env:
       - CGO_ENABLED=0
     targets:
