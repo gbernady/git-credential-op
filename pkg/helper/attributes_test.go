@@ -1,10 +1,11 @@
-package main
+package helper
 
 import (
 	"bytes"
 	"testing"
+	"time"
 
-	"github.com/gbernady/go-op"
+	"github.com/gbernady/git-credential-op/pkg/opcli"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,29 +13,32 @@ func TestAttributesParse(t *testing.T) {
 	tests := []struct {
 		name   string
 		value  string
-		expect attributes
+		expect Attributes
 	}{
 		{
 			name:   "Blank",
 			value:  "",
-			expect: attributes{},
+			expect: Attributes{},
 		},
 		{
 			name:  "All",
-			value: "protocol=https\nhost=foo.com\npath=bar/baz.git\nusername=qux\npassword=wat\nurl=https://qux:wat@foo.com/bar/baz.git\n",
-			expect: attributes{
-				Protocol: "https",
-				Host:     "foo.com",
-				Path:     "bar/baz.git",
-				Username: "qux",
-				Password: "wat",
-				URL:      "https://qux:wat@foo.com/bar/baz.git",
+			value: "protocol=https\nhost=foo.com\npath=bar/baz.git\nusername=qux\npassword=wat\npassword_expiry_utc=1183110060\noauth_refresh_token=watwat\nurl=https://qux:wat@foo.com/bar/baz.git\nwwwauth[]=basic realm=\"example.com\"\n",
+			expect: Attributes{
+				Protocol:          "https",
+				Host:              "foo.com",
+				Path:              "bar/baz.git",
+				Username:          "qux",
+				Password:          "wat",
+				PasswordExpiry:    time.Unix(1183110060, 0),
+				OAuthRefreshToken: "watwat",
+				URL:               "https://qux:wat@foo.com/bar/baz.git",
+				WWWAuth:           []string{`basic realm="example.com"`},
 			},
 		},
 		{
 			name:  "SkipEmptyAttr",
 			value: "protocol=https\nhost=foo.com\npath=\n",
-			expect: attributes{
+			expect: Attributes{
 				Protocol: "https",
 				Host:     "foo.com",
 			},
@@ -42,7 +46,7 @@ func TestAttributesParse(t *testing.T) {
 		{
 			name:  "SkipEmptyLines",
 			value: "protocol=https\n\n\nhost=foo.com\n",
-			expect: attributes{
+			expect: Attributes{
 				Protocol: "https",
 				Host:     "foo.com",
 			},
@@ -50,15 +54,14 @@ func TestAttributesParse(t *testing.T) {
 		{
 			name:  "SkipUnknownAttr",
 			value: "foo=bar\nhost=foo.com\nbaz=qux\n",
-			expect: attributes{
+			expect: Attributes{
 				Host: "foo.com",
 			},
 		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			a := &attributes{}
-			a.Parse(bytes.NewBufferString(test.value))
+			a := ParseAttributes(bytes.NewBufferString(test.value))
 			assert.Equal(t, &test.expect, a)
 		})
 	}
@@ -67,25 +70,28 @@ func TestAttributesParse(t *testing.T) {
 func TestAttributesString(t *testing.T) {
 	tests := []struct {
 		name   string
-		value  attributes
+		value  Attributes
 		expect string
 	}{
 		{
 			name:   "Blank",
-			value:  attributes{},
+			value:  Attributes{},
 			expect: "",
 		},
 		{
 			name: "All",
-			value: attributes{
-				Protocol: "https",
-				Host:     "foo.com",
-				Path:     "bar/baz.git",
-				Username: "qux",
-				Password: "wat",
-				URL:      "https://qux:wat@foo.com/bar/baz.git",
+			value: Attributes{
+				Protocol:          "https",
+				Host:              "foo.com",
+				Path:              "bar/baz.git",
+				Username:          "qux",
+				Password:          "wat",
+				PasswordExpiry:    time.Unix(1183110060, 0),
+				OAuthRefreshToken: "watwat",
+				URL:               "https://qux:wat@foo.com/bar/baz.git",
+				WWWAuth:           []string{`basic realm="example.com"`},
 			},
-			expect: "protocol=https\nhost=foo.com\npath=bar/baz.git\nusername=qux\npassword=wat\nurl=https://qux:wat@foo.com/bar/baz.git\n",
+			expect: "protocol=https\nhost=foo.com\npath=bar/baz.git\nusername=qux\npassword=wat\npassword_expiry_utc=1183110060\noauth_refresh_token=watwat\nurl=https://qux:wat@foo.com/bar/baz.git\nwwwauth[]=basic realm=\"example.com\"\n",
 		},
 	}
 	for _, test := range tests {
@@ -98,36 +104,36 @@ func TestAttributesString(t *testing.T) {
 func TestAttributesMatch(t *testing.T) {
 	tests := []struct {
 		name  string
-		attr  attributes
-		item  *op.Item
+		attr  Attributes
+		item  *opcli.Item
 		match bool
 	}{
 		{
 			name: "HostMatch",
-			attr: attributes{
+			attr: Attributes{
 				Protocol: "https",
 				Host:     "foo.com",
 				Path:     "bar/baz.git",
 			},
-			item: &op.Item{
+			item: &opcli.Item{
 				Title:    "Foo API Key",
-				Category: op.CategoryAPICredential,
-				Fields: []op.Field{
+				Category: opcli.CategoryAPICredential,
+				Fields: []opcli.Field{
 					{
 						ID:    "username",
-						Type:  op.FieldTypeString,
+						Type:  opcli.FieldTypeString,
 						Label: "username",
 						Value: "qux",
 					},
 					{
 						ID:    "credential",
-						Type:  op.FieldTypeConcealed,
+						Type:  opcli.FieldTypeConcealed,
 						Label: "credential",
 						Value: "wat",
 					},
 					{
 						ID:    "hostname",
-						Type:  op.FieldTypeString,
+						Type:  opcli.FieldTypeString,
 						Label: "hostname",
 						Value: "foo.com",
 					},
@@ -137,24 +143,24 @@ func TestAttributesMatch(t *testing.T) {
 		},
 		{
 			name: "HostMissing",
-			attr: attributes{
+			attr: Attributes{
 				Protocol: "https",
 				Host:     "foo.com",
 				Path:     "bar/baz.git",
 			},
-			item: &op.Item{
+			item: &opcli.Item{
 				Title:    "Foo API Key",
-				Category: op.CategoryAPICredential,
-				Fields: []op.Field{
+				Category: opcli.CategoryAPICredential,
+				Fields: []opcli.Field{
 					{
 						ID:    "username",
-						Type:  op.FieldTypeString,
+						Type:  opcli.FieldTypeString,
 						Label: "username",
 						Value: "qux",
 					},
 					{
 						ID:    "credential",
-						Type:  op.FieldTypeConcealed,
+						Type:  opcli.FieldTypeConcealed,
 						Label: "credential",
 						Value: "wat",
 					},
@@ -164,30 +170,30 @@ func TestAttributesMatch(t *testing.T) {
 		},
 		{
 			name: "HostMismatch",
-			attr: attributes{
+			attr: Attributes{
 				Protocol: "https",
 				Host:     "foo.com",
 				Path:     "bar/baz.git",
 			},
-			item: &op.Item{
+			item: &opcli.Item{
 				Title:    "Foo API Key",
-				Category: op.CategoryAPICredential,
-				Fields: []op.Field{
+				Category: opcli.CategoryAPICredential,
+				Fields: []opcli.Field{
 					{
 						ID:    "username",
-						Type:  op.FieldTypeString,
+						Type:  opcli.FieldTypeString,
 						Label: "username",
 						Value: "qux",
 					},
 					{
 						ID:    "credential",
-						Type:  op.FieldTypeConcealed,
+						Type:  opcli.FieldTypeConcealed,
 						Label: "credential",
 						Value: "wat",
 					},
 					{
 						ID:    "hostname",
-						Type:  op.FieldTypeString,
+						Type:  opcli.FieldTypeString,
 						Label: "hostname",
 						Value: "bar.com",
 					},
@@ -197,36 +203,36 @@ func TestAttributesMatch(t *testing.T) {
 		},
 		{
 			name: "PathMatch",
-			attr: attributes{
+			attr: Attributes{
 				Protocol: "https",
 				Host:     "foo.com",
 				Path:     "bar/baz.git",
 			},
-			item: &op.Item{
+			item: &opcli.Item{
 				Title:    "Foo API Key",
-				Category: op.CategoryAPICredential,
-				Fields: []op.Field{
+				Category: opcli.CategoryAPICredential,
+				Fields: []opcli.Field{
 					{
 						ID:    "username",
-						Type:  op.FieldTypeString,
+						Type:  opcli.FieldTypeString,
 						Label: "username",
 						Value: "qux",
 					},
 					{
 						ID:    "credential",
-						Type:  op.FieldTypeConcealed,
+						Type:  opcli.FieldTypeConcealed,
 						Label: "credential",
 						Value: "wat",
 					},
 					{
 						ID:    "hostname",
-						Type:  op.FieldTypeString,
+						Type:  opcli.FieldTypeString,
 						Label: "hostname",
 						Value: "foo.com",
 					},
 					{
 						ID:    "7kdfaup5ymst4ujtcvo5wl35cu",
-						Type:  op.FieldTypeString,
+						Type:  opcli.FieldTypeString,
 						Label: "path",
 						Value: "bar/baz.git",
 					},
@@ -236,36 +242,36 @@ func TestAttributesMatch(t *testing.T) {
 		},
 		{
 			name: "PathMismatch",
-			attr: attributes{
+			attr: Attributes{
 				Protocol: "https",
 				Host:     "foo.com",
 				Path:     "bar/baz.git",
 			},
-			item: &op.Item{
+			item: &opcli.Item{
 				Title:    "Foo API Key",
-				Category: op.CategoryAPICredential,
-				Fields: []op.Field{
+				Category: opcli.CategoryAPICredential,
+				Fields: []opcli.Field{
 					{
 						ID:    "username",
-						Type:  op.FieldTypeString,
+						Type:  opcli.FieldTypeString,
 						Label: "username",
 						Value: "qux",
 					},
 					{
 						ID:    "credential",
-						Type:  op.FieldTypeConcealed,
+						Type:  opcli.FieldTypeConcealed,
 						Label: "credential",
 						Value: "wat",
 					},
 					{
 						ID:    "hostname",
-						Type:  op.FieldTypeString,
+						Type:  opcli.FieldTypeString,
 						Label: "hostname",
 						Value: "foo.com",
 					},
 					{
 						ID:    "7kdfaup5ymst4ujtcvo5wl35cu",
-						Type:  op.FieldTypeString,
+						Type:  opcli.FieldTypeString,
 						Label: "path",
 						Value: "bar/qux.git",
 					},
