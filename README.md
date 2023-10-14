@@ -23,8 +23,8 @@ You can use it to access remote repositories over HTTPS with credentials like Gi
 | Architecture | macOS | Linux | Windows |
 |--------------|-------|-------|---------|
 | x86          | N/A   | ✕     | ✕       |
-| amd64        | ✓     | ✕     | ✕       |
-| arm64        | ✓     | ✕     | ✕       |
+| amd64        | ✓     | ✓     | ✕       |
+| arm64        | ✓     | ✓     | ✕       |
 
 ## Installation
 

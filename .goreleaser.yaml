@@ -14,6 +14,8 @@ builds:
     targets:
       - darwin_amd64
       - darwin_arm64
+      - linux_amd64
+      - linux_arm64
 
 archives:
   - format: binary
@@ -30,7 +32,6 @@ changelog:
   filters:
     exclude:
       - '^Merge'
-      - '^ci:'
 
 release:
   github:
