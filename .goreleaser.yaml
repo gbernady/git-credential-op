@@ -1,5 +1,10 @@
+before:
+  hooks:
+    - go mod download
+
 builds:
-  - binary: git-credential-op
+  - main: ./cmd/git-credential-op
+    binary: git-credential-op
     flags:
       - -trimpath
     ldflags:
@@ -25,5 +30,9 @@ changelog:
   filters:
     exclude:
       - '^Merge'
-      - '^test:'
-      - '^docs:'
+      - '^ci:'
+
+release:
+  github:
+    owner: gbernady
+    name: git-credential-op
