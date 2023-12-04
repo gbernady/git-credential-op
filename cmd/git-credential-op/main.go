@@ -7,7 +7,6 @@ import (
 	"runtime/debug"
 
 	"github.com/gbernady/git-credential-op/pkg/helper"
-	"github.com/gbernady/git-credential-op/pkg/opcli"
 )
 
 var (
@@ -25,13 +24,14 @@ func init() {
 func main() {
 	flag.Parse()
 
-	op := opcli.CLI{
+	h := &helper.Helper{
 		Account: *accountFlag,
+		Vault:   *vaultFlag,
 	}
 
 	if *versionFlag {
 		fmt.Fprintf(os.Stdout, "git-credential-op version %s\n", version())
-		v, err := op.Version()
+		v, err := h.CLIVersion()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "unable to read op version: %v", err)
 		} else {
@@ -40,10 +40,6 @@ func main() {
 		return
 	}
 
-	h := &helper.Helper{
-		Op:    op,
-		Vault: *vaultFlag,
-	}
 	res, err := h.Run(helper.Operation(flag.Arg(0)), helper.ParseAttributes(os.Stdin))
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)

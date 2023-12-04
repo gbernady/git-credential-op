@@ -7,39 +7,20 @@ import (
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/gbernady/git-credential-op/pkg/opcli"
 )
 
 // Atrributes represents a set of git credential named attributes passed to the git credential helper.
 // See https://git-scm.com/docs/git-credential#IOFMT for more details.
 type Attributes struct {
-	// Protocol is the protocol over which the credential will be used (e.g., https).
-	Protocol string
-
-	// Host is the remote hostname for a network credential.
-	Host string
-
-	// Path is the path with which the credential will be used.
-	Path string
-
-	// Username is the credential’s username.
-	Username string
-
-	// Password is the credential’s password.
-	Password string
-
-	// PasswordExpiry is the expiry date for generated passwords such as an OAuth access token.
-	PasswordExpiry time.Time
-
-	// OAuthRefreshToken is the OAuth refresh token accompanying a password that is an OAuth access token.
+	Protocol          string
+	Host              string
+	Path              string
+	Username          string
+	Password          string
+	PasswordExpiry    time.Time
 	OAuthRefreshToken string
-
-	// URL is a special attribute that a git credential helper may return instead of its constituent parts (protocol, host, etc.).
-	URL string
-
-	// WWWAuth contains WWW-Authenticate authentication headers received by Git with an HTTP response.
-	WWWAuth []string
+	URL               string
+	WWWAuth           []string
 }
 
 // ParseAttributes parses git credential into named attributes.
@@ -110,17 +91,4 @@ func (a *Attributes) String() string {
 		fmt.Fprintf(&b, "wwwauth[]=%s\n", v)
 	}
 	return b.String()
-}
-
-// Match checks if attributes match a given opcli item.
-func (a *Attributes) Match(item *opcli.Item) bool {
-	// required
-	if f := item.Field("hostname"); f == nil || f.Value == "" || f.Value != a.Host {
-		return false
-	}
-	// optional
-	if f := item.Field("path"); f != nil && f.Value != "" && f.Value != a.Path {
-		return false
-	}
-	return true
 }
